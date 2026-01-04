@@ -25,6 +25,7 @@ public class KisRankingClient {
     @Value("${kis.app-key}")  private String appKey;
     @Value("${kis.app-secret}") private String appSecret;
 
+
     public KisRankingClient(RestTemplate kisRestTemplate, ExecutorService kisExecutor) {
         this.kisRestTemplate = kisRestTemplate;
         this.kisExecutor = kisExecutor;

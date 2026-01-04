@@ -6,16 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class FluctuationResponse {
-
-    @JsonProperty("rt_cd")
-    private String resultCode;           // 성공/실패 코드
-
-    @JsonProperty("msg_cd")
-    private String messageCode;          // 응답 코드
-
-    @JsonProperty("msg1")
-    private String message;              // 응답 메시지
+public class FluctuationResponse extends BaseResponse{
 
     @JsonProperty("output")
     private List<Output> output;

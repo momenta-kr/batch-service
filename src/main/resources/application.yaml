@@ -2,6 +2,11 @@ server:
   port: 8090
 
 spring:
+  main:
+    web-application-type: none
+  batch:
+    job:
+      enabled: false
   application:
     name: batch-service
 

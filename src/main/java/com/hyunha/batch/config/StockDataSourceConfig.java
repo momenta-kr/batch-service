@@ -2,6 +2,7 @@ package com.hyunha.batch.config;
 
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
@@ -18,7 +19,7 @@ import javax.sql.DataSource;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-        basePackages = "com.hyunha.batch.stock.repository",
+        basePackages = "com.hyunha.batch.stock.call_kis_api_job.infra.jpa",
         entityManagerFactoryRef = "stockEntityManagerFactory",
         transactionManagerRef = "stockTransactionManager"
 )
@@ -36,7 +37,7 @@ public class StockDataSourceConfig {
     ) {
         return builder
                 .dataSource(stockDataSource())
-                .packages("com.hyunha.batch.stock.entity")
+                .packages("com.hyunha.batch.stock.call_kis_api_job.infra.jpa.entity")
                 .persistenceUnit("stock")
                 .build();
     }
