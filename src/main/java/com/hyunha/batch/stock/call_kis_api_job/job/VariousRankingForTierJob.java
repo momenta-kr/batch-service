@@ -23,7 +23,6 @@ public class VariousRankingForTierJob {
     public Job fetchVariousRankingForTierJob(Step fetchVariousRankingForTierStep) {
         return new JobBuilder("fetchVariousRankingForTierJob", jobRepository)
                 .start(fetchVariousRankingForTierStep)
-//                .next()
                 .build();
     }
 

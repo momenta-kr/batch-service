@@ -54,6 +54,11 @@ public class KisRankingClient2 implements RankingClient {
                                 .build())
                 .headers(getCommonHttpHeaders("FHPST01740000"))
                 .retrieve()
+                .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
+                        (req, res) -> {
+                            String body = new String(res.getBody().readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+                            throw new IllegalStateException("KIS API failed: status=" + res.getStatusCode() + " body=" + body);
+                        })
                 .body(MarketCapRankResponse.class);
     }
 

@@ -1,6 +1,6 @@
 package com.hyunha.batch.stock.call_kis_api_job.client;
 
-import com.hyunha.batch.properties.KisProperty;
+import com.hyunha.batch.stock.call_kis_api_job.infra.kis.KisProperties;
 import com.hyunha.batch.stock.call_kis_api_job.model.response.FluctuationResponse;
 import com.hyunha.batch.stock.call_kis_api_job.model.response.IndexPriceResponse;
 import com.hyunha.batch.stock.call_kis_api_job.model.response.IndustryIndexPriceResponse;
@@ -19,7 +19,7 @@ public class KisClient {
 
     private final RestClient kisRestClient;
     private final TokenProvider tokenProvider;
-    private final KisProperty kisProperty;
+    private final KisProperties kisProperties;
 
     public IndustryIndexPriceResponse fetchIndustryIndexPrice() {
         return kisRestClient.get()
@@ -95,8 +95,8 @@ public class KisClient {
         return httpHeaders -> {
             httpHeaders.setBearerAuth(tokenProvider.getAccessToken());
             httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-            httpHeaders.set("appkey", kisProperty.getAppKey());
-            httpHeaders.set("appsecret", kisProperty.getAppSecret());
+            httpHeaders.set("appkey", kisProperties.getAppKey());
+            httpHeaders.set("appsecret", kisProperties.getAppSecret());
             httpHeaders.set("tr_id", transactionId);
             httpHeaders.set("custtype", "P");
         };

@@ -17,19 +17,16 @@ public class RestClientConfig {
     @Value("${external.api.scrapy.url}")
     private String scrapyUrl;
 
-    @Qualifier("kisRestClient")
     @Bean
     public RestClient kisRestClient(RestClient.Builder builder) {
         return builder.baseUrl(kisProperties.getBaseUrl()).build();
     }
 
-    @Qualifier("naverNewsRestClient")
     @Bean
     public RestClient naverNewsRestClient(RestClient.Builder builder) {
         return builder.baseUrl("https://openapi.naver.com").build();
     }
 
-    @Qualifier("scrapyRestClient")
     @Bean
     public RestClient scrapyRestClient(RestClient.Builder builder) {
         return builder.baseUrl(scrapyUrl).build();
