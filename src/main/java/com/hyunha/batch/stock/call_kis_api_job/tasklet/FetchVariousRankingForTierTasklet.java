@@ -45,7 +45,6 @@ public class FetchVariousRankingForTierTasklet implements Tasklet {
         var strength  = kisRankingClient.fetchTradeStrengthRanking();
 
         List<String> universeOrdered = universeRepository
-//                .findKospiByMarketCapDesc(LocalDate.now().minusDays(1))
                 .findKospiByMarketCapDesc()
                 .stream().map(Universe::getSymbol).toList();
 

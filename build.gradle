@@ -73,7 +73,7 @@ jib {
 
 	to {
 		image = "docker.io/nohyunha95/batch-service"
-		tags = ["0.0.6", "latest"]
+		tags = ["0.0.7", "latest"]
 	}
 
 	container {

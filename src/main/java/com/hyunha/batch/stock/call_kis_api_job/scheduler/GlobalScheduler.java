@@ -88,7 +88,7 @@ public class GlobalScheduler {
     /**
      * 뉴스기사를 정해진 시간마다 보여주기 위해서 KOSPI 종목에 tier를 부여함
      */
-    @Scheduled(cron = "0 30 19 * * MON-FRI", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 30 19 * * *", zone = "Asia/Seoul")
     public void runFetchVariousRankingForTierJob() {
         if (isJobRunning("fetchVariousRankingForTierJob")) {
             log.info("Job already running, skip");
