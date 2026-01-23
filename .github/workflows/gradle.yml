@@ -1,0 +1,113 @@
+name: Java CI with Gradle
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+# ✅ 동시에 여러 push가 들어오면 tag bump 충돌나기 쉬우니 직렬화 권장
+concurrency:
+  group: batch-service-prod
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
+
+    - name: Login to DockerHub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    # ----------------------------
+    # TAG 결정
+    # ----------------------------
+    - name: Set TAG for non-main events (sha)
+      if: github.event_name != 'push' || github.ref != 'refs/heads/main'
+      run: |
+        TAG=${GITHUB_SHA::7}
+        echo "TAG=$TAG" >> $GITHUB_ENV
+
+    - name: Checkout GitOps repository
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      uses: actions/checkout@v4
+      with:
+        repository: momenta-kr/gitops
+        token: ${{ secrets.GITOPS_REPO_TOKEN }}
+        ref: main
+        path: gitops
+        persist-credentials: false
+
+    - name: Install yq
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      run: |
+        sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+        sudo chmod +x /usr/local/bin/yq
+        yq --version
+
+    - name: Compute next semver TAG from GitOps (patch +1)
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      working-directory: gitops
+      run: |
+        CURRENT=$(yq -r '.image.tag // "0.0.0"' batch-service/values-prod.yml)
+
+        if [[ "$CURRENT" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+          MAJOR="${BASH_REMATCH[1]}"
+          MINOR="${BASH_REMATCH[2]}"
+          PATCH="${BASH_REMATCH[3]}"
+          NEXT="${MAJOR}.${MINOR}.$((PATCH+1))"
+        else
+          echo "ERROR: image.tag is not semver (x.y.z): $CURRENT"
+          exit 1
+        fi
+
+        echo "TAG=$NEXT" >> $GITHUB_ENV
+        echo "Bump: $CURRENT -> $NEXT"
+
+    # ----------------------------
+    # Build & Push (TAG 사용)
+    # ----------------------------
+    - name: Build & Push with Jib
+      run: |
+        ./gradlew jib --no-daemon --stacktrace -Djib.to.tags=${TAG},latest
+
+    # ----------------------------
+    # GitOps repo bump (main push only)
+    # ----------------------------
+    - name: Update image tag in values-prod.yml
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      working-directory: gitops
+      run: |
+        yq -i '.image.tag = strenv(TAG)' batch-service/values-prod.yml
+
+    - name: Commit & push GitOps changes
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      working-directory: gitops
+      env:
+        GITOPS_TOKEN: ${{ secrets.GITOPS_REPO_TOKEN }}
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+
+        git add batch-service/values-prod.yml
+        git commit -m "chore(prod): bump batch-service image tag to ${TAG}" || exit 0
+
+        git remote set-url origin https://x-access-token:${GITOPS_TOKEN}@github.com/momenta-kr/gitops.git
+        git push origin main
