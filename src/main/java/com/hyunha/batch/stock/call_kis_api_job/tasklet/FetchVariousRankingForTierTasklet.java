@@ -8,7 +8,6 @@ import com.hyunha.batch.stock.call_kis_api_job.infra.jpa.UniverseRepository;
 import com.hyunha.batch.stock.call_kis_api_job.infra.jpa.entity.Universe;
 import com.hyunha.batch.stock.call_kis_api_job.model.response.MarketCapRankResponse;
 import com.hyunha.batch.stock.call_kis_api_job.model.response.VolumeRankResponse;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -16,6 +15,7 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Comparator;

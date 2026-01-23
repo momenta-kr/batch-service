@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface StockTierDailyRepository extends JpaRepository<StockTierDaily, Long> {
 
-    @Modifying(clearAutomatically = true)
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query("delete from StockTierDaily d where d.asOfDate = :asOfDate")
     int deleteByAsOfDate(LocalDate asOfDate);
 
