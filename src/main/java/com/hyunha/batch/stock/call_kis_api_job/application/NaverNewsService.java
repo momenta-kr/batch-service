@@ -48,16 +48,19 @@ public class NaverNewsService {
 
         // 1) 전체 종목의 ScrapydJob을 먼저 전부 수집
         List<ScrapydJob> allJobs = new ArrayList<>();
+        List<String> keywords = List.of("주가", "급등");
 
         for (Stock stock : stocks) {
-            String query = buildQuery(stock);
+            for (String keyword : keywords) {
+                String query = buildQuery(stock, keyword);
 
-            try {
-                List<ScrapydJob> jobs = callNaverNews(query, stock.getSymbol());
-                allJobs.addAll(jobs);
-            } catch (Exception e) {
-                log.warn("naver news failed. query={}, symbol={}, err={}",
-                        query, stock.getSymbol(), e.toString());
+                try {
+                    List<ScrapydJob> jobs = callNaverNews(query, stock.getSymbol());
+                    allJobs.addAll(jobs);
+                } catch (Exception e) {
+                    log.warn("naver news failed. query={}, symbol={}, err={}",
+                            query, stock.getSymbol(), e.toString());
+                }
             }
         }
 
@@ -136,16 +139,16 @@ public class NaverNewsService {
      * 종목별 쿼리 생성
      * 필요하면 "주가" 대신 "실적", "전망" 등 확장 가능
      */
-    private String buildQuery(Stock stock) {
+    private String buildQuery(Stock stock, String keyword) {
         // name_ko가 null일 수 있으니 안전하게
         String nameKo = Optional.ofNullable(stock.getNameKo()).orElse("").trim();
         if (nameKo.isEmpty()) {
             // 심볼만 있을 때 fallback
             return Optional.ofNullable(stock.getId())
                     .map(StockMasterId::getSymbol)
-                    .orElse("주가");
+                    .orElse(keyword);
         }
-        return nameKo + " 주가";
+        return nameKo + " " + keyword;
     }
 
 }

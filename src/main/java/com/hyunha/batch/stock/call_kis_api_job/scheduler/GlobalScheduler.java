@@ -35,7 +35,6 @@ public class GlobalScheduler {
     private final Job fetchFluctuationJob;
     private final Job fetchIndexPriceJob;
     private final Job fetchVariousRankingForTierJob;
-    private final Job fetchNaverNewsJob;
     private final Job saveSearchDefaultJob;
 
     private final StockTierDailyRepository stockTierDailyRepository;
@@ -43,26 +42,6 @@ public class GlobalScheduler {
     private final NaverNewsService naverNewsService;
     private final ScrapyService scrapyService;
 
-//    @Scheduled(fixedDelay = 86_400_000)
-//    public void runFetchNaverNewsJob() {
-//        if (isJobRunning("fetchNaverNewsJob")) {
-//            log.info("Job already running, skip");
-//            return;
-//        }
-//
-//        JobParameters params = new JobParametersBuilder()
-//                .addLong("runAt", System.currentTimeMillis()) // ⭐ 중요
-//                .toJobParameters();
-//
-//        try {
-//            jobLauncher.run(fetchNaverNewsJob, params);
-//        } catch (JobExecutionAlreadyRunningException |
-//                 JobRestartException |
-//                 JobInstanceAlreadyCompleteException |
-//                 JobParametersInvalidException e) {
-//            log.warn("Batch job skipped: {}", e.getMessage());
-//        }
-//    }
 
     @Scheduled(fixedDelay = 300_000)
     public void runSaveSearchDefaultJob() {
