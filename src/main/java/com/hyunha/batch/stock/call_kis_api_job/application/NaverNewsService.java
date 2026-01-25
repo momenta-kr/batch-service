@@ -27,6 +27,7 @@ public class NaverNewsService {
 
     private final ObjectMapper objectMapper;
     private final RestClient naverNewsRestClient;
+    private final ScrapyService scrapyService;
 
 
     // ✅ 도메인 -> spiderName 매핑 (if-else 제거)
@@ -44,10 +45,9 @@ public class NaverNewsService {
     );
 
 
-    public List<ScrapydJob> fetchNews(List<Stock> stocks) {
+    public void fetchNews(List<Stock> stocks) {
 
         // 1) 전체 종목의 ScrapydJob을 먼저 전부 수집
-        List<ScrapydJob> allJobs = new ArrayList<>();
         List<String> keywords = List.of("주가", "급등");
 
         for (Stock stock : stocks) {
@@ -56,20 +56,13 @@ public class NaverNewsService {
 
                 try {
                     List<ScrapydJob> jobs = callNaverNews(query, stock.getSymbol());
-                    allJobs.addAll(jobs);
+                    scrapyService.callScrapy(jobs);
                 } catch (Exception e) {
                     log.warn("naver news failed. query={}, symbol={}, err={}",
                             query, stock.getSymbol(), e.toString());
                 }
             }
         }
-
-        // (옵션) tasklet 레벨에서 URL 중복 제거 (callNaverNews 내부에서도 제거하지만, 종목 간 중복까지 제거)
-        return allJobs.stream()
-                .collect(Collectors.toMap(ScrapydJob::url, j -> j, (a, b) -> a, LinkedHashMap::new))
-                .values()
-                .stream()
-                .toList();
     }
 
     /**

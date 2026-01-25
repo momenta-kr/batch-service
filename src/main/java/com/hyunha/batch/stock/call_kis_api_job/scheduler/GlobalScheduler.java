@@ -163,9 +163,7 @@ public class GlobalScheduler {
         List<StockTierDaily> stockTierDailies = stockTierDailyRepository.findByAsOfDateAndTierOrderByScore(yesterday, tier);
         List<StockMasterId> stockMasterIds = stockTierDailies.stream().map(std -> new StockMasterId(StockMarket.KOSPI, std.getSymbol())).toList();
         List<Stock> stocks = stockMasterRepository.findByIdIn(stockMasterIds);
-        List<ScrapydJob> dedupedAllJobs = naverNewsService.fetchNews(stocks);
-        scrapyService.callScrapy(dedupedAllJobs);
-
+        naverNewsService.fetchNews(stocks);
         log.info("runStockNews tier={}, count={}", tier, stocks.size());
     }
 
