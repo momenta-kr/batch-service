@@ -153,7 +153,7 @@ public class GlobalScheduler {
 
 
     // 08:00 ~ 15:55 (5분마다)
-    @Scheduled(cron = "0 */5 8-15 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 */5 8-23 * * *", zone = "Asia/Seoul")
     public void runTier0Stocks() {
         runStockNews(Tier.T0);
     }
