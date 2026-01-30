@@ -40,7 +40,6 @@ public class GlobalScheduler {
     private final StockTierDailyRepository stockTierDailyRepository;
     private final StockMasterRepository stockMasterRepository;
     private final NaverNewsService naverNewsService;
-    private final ScrapyService scrapyService;
 
 
     @Scheduled(fixedDelay = 300_000)

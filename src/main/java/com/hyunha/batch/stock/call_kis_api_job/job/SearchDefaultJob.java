@@ -1,7 +1,7 @@
 package com.hyunha.batch.stock.call_kis_api_job.job;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hyunha.batch.stock.call_kis_api_job.application.RankingClient;
+import com.hyunha.batch.stock.call_kis_api_job.client.KisClient;
 import com.hyunha.batch.stock.call_kis_api_job.model.response.FluctuationResponse;
 import com.hyunha.batch.stock.call_kis_api_job.model.response.MarketCapRankResponse;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,6 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -33,7 +32,7 @@ public class SearchDefaultJob {
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager tx;
-    private final RankingClient rankingClient;
+    private final KisClient kisClient;
     private final StringRedisTemplate stringRedisTemplate;
     private final ObjectMapper objectMapper;
 
@@ -61,9 +60,9 @@ public class SearchDefaultJob {
     public Step saveSearchDefaultStep() {
         return new StepBuilder("saveSearchDefaultStep", jobRepository)
                 .tasklet((contribution, chunkContext) -> {
-                    List<MarketCapRankResponse.Output> topMarketCapRankings = rankingClient.fetchMarketCapRanking().getOutputList().stream().limit(5).toList();
-                    List<FluctuationResponse.Output> topGainers = rankingClient.fetchTopGainers().getOutput().stream().limit(5).toList();
-                    List<FluctuationResponse.Output> topLosers = rankingClient.fetchTopLosers().getOutput().stream().limit(5).toList();
+                    List<MarketCapRankResponse.Output> topMarketCapRankings = kisClient.fetchMarketCapRanking().getOutputList().stream().limit(5).toList();
+                    List<FluctuationResponse.Output> topGainers = kisClient.fetchTopGainers().getOutput().stream().limit(5).toList();
+                    List<FluctuationResponse.Output> topLosers = kisClient.fetchTopLosers().getOutput().stream().limit(5).toList();
 
                     Set<String> symbols = Stream.of(
                                     topMarketCapRankings.stream().map(MarketCapRankResponse.Output::getShortSymbolCode),
