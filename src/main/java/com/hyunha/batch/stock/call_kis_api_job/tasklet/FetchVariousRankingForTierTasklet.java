@@ -1,8 +1,8 @@
 package com.hyunha.batch.stock.call_kis_api_job.tasklet;
 
-import com.hyunha.batch.stock.call_kis_api_job.application.RankingClient;
 import com.hyunha.batch.stock.call_kis_api_job.application.TierDailyPersistenceService;
 import com.hyunha.batch.stock.call_kis_api_job.application.TierScoring;
+import com.hyunha.batch.stock.call_kis_api_job.client.KisClient;
 import com.hyunha.batch.stock.call_kis_api_job.domain.ScoredSymbol;
 import com.hyunha.batch.stock.call_kis_api_job.infra.jpa.UniverseRepository;
 import com.hyunha.batch.stock.call_kis_api_job.infra.jpa.entity.Universe;
@@ -30,19 +30,19 @@ import static com.hyunha.batch.stock.call_kis_api_job.application.RankUtils.buil
 @Component
 public class FetchVariousRankingForTierTasklet implements Tasklet {
 
-    private final RankingClient kisRankingClient;
+    private final KisClient kisClient;
     private final UniverseRepository universeRepository;
     private final TierDailyPersistenceService tierDailyPersistenceService;
 
     @Nullable
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-        var marketCap = kisRankingClient.fetchMarketCapRanking();
-        var volume    = kisRankingClient.fetchVolumeRanking();
-        var gainers   = kisRankingClient.fetchTopGainers();
-        var losers    = kisRankingClient.fetchTopLosers();
-        var interest  = kisRankingClient.fetchStocksOfInterestRanking();
-        var strength  = kisRankingClient.fetchTradeStrengthRanking();
+        var marketCap = kisClient.fetchMarketCapRanking();
+        var volume    = kisClient.fetchVolumeRanking();
+        var gainers   = kisClient.fetchTopGainers();
+        var losers    = kisClient.fetchTopLosers();
+        var interest  = kisClient.fetchStocksOfInterestRanking();
+        var strength  = kisClient.fetchTradeStrengthRanking();
 
         List<String> universeOrdered = universeRepository
                 .findKospiByMarketCapDesc()

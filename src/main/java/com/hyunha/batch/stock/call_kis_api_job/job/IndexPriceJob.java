@@ -1,9 +1,6 @@
 package com.hyunha.batch.stock.call_kis_api_job.job;
 
 import com.hyunha.batch.stock.call_kis_api_job.tasklet.FetchIndexPriceTasklet;
-import com.hyunha.batch.stock.call_kis_api_job.tasklet.FetchIndustryIndexPriceTasklet;
-import com.hyunha.batch.stock.call_kis_api_job.tasklet.SaveIndustryIndexPriceTasklet;
-import com.hyunha.batch.stock.call_kis_api_job.tasklet.SaveToRedisTasklet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
