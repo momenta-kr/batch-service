@@ -18,17 +18,17 @@ public class ThemeJob {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager tx;
 
-    @Bean
-    public Job fetchThemeJob() {
-        return new JobBuilder("fetchThemeJob", jobRepository)
-                .incrementer(new RunIdIncrementer())
-                .start()
-    }
-
-    @Bean
-    public Step fetchThemeStep() {
-        return new StepBuilder("fetchThemeStep", jobRepository)
-                .tasklet(, tx)
-                .build();
-    }
+//    @Bean
+//    public Job fetchThemeJob() {
+//        return new JobBuilder("fetchThemeJob", jobRepository)
+//                .incrementer(new RunIdIncrementer())
+//                .start()
+//    }
+//
+//    @Bean
+//    public Step fetchThemeStep() {
+//        return new StepBuilder("fetchThemeStep", jobRepository)
+//                .tasklet(, tx)
+//                .build();
+//    }
 }
