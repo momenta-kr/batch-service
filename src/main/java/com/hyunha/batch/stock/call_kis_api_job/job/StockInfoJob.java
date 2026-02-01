@@ -1,5 +1,6 @@
 package com.hyunha.batch.stock.call_kis_api_job.job;
 
+import com.hyunha.batch.stock.call_kis_api_job.tasklet.FetchStockInfoTasklet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -13,22 +14,25 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @RequiredArgsConstructor
 @Component
-public class ThemeJob {
+public class StockInfoJob {
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager tx;
 
-//    @Bean
-//    public Job fetchThemeJob() {
-//        return new JobBuilder("fetchThemeJob", jobRepository)
-//                .incrementer(new RunIdIncrementer())
-//                .start()
-//    }
-//
-//    @Bean
-//    public Step fetchThemeStep() {
-//        return new StepBuilder("fetchThemeStep", jobRepository)
-//                .tasklet(, tx)
-//                .build();
-//    }
+    private final FetchStockInfoTasklet fetchStockInfoTasklet;
+
+    @Bean
+    public Job fetchStockInfoJob(Step fetchStockInfoStep) {
+        return new JobBuilder("fetchStockInfoJob", jobRepository)
+                .incrementer(new RunIdIncrementer())
+                .start(fetchStockInfoStep)
+                .build();
+    }
+
+    @Bean
+    public Step fetchStockInfoStep() {
+        return new StepBuilder("fetchStockInfoStep", jobRepository)
+                .tasklet(fetchStockInfoTasklet, tx)
+                .build();
+    }
 }

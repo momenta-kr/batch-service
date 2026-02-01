@@ -3,9 +3,14 @@ package com.hyunha.batch.stock.call_kis_api_job.client;
 import com.hyunha.batch.stock.call_kis_api_job.model.response.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(name = "kis-gateway")
 public interface KisClient {
+
+    @GetMapping("/api/kis/v1/domestic-stock-current-price")
+    DomesticStockCurrentPriceResponse fetchDomesticStockCurrentPrice(
+            @RequestParam String stockCode);
 
     @GetMapping("/api/kis/v1/top-gainers")
     FluctuationResponse fetchTopGainers();

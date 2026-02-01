@@ -6,6 +6,7 @@ import com.hyunha.batch.stock.call_kis_api_job.domain.ScrapydJob;
 import com.hyunha.batch.stock.call_kis_api_job.infra.jpa.StockMasterRepository;
 import com.hyunha.batch.stock.call_kis_api_job.infra.jpa.StockTierDailyRepository;
 import com.hyunha.batch.stock.call_kis_api_job.infra.jpa.entity.*;
+import com.hyunha.batch.stock.call_kis_api_job.job.StockInfoJob;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -36,10 +37,33 @@ public class GlobalScheduler {
     private final Job fetchIndexPriceJob;
     private final Job fetchVariousRankingForTierJob;
     private final Job saveSearchDefaultJob;
+    private final Job fetchStockInfoJob;
 
     private final StockTierDailyRepository stockTierDailyRepository;
     private final StockMasterRepository stockMasterRepository;
     private final NaverNewsService naverNewsService;
+
+    @Scheduled(fixedDelay = 60_000)
+    public void runStockInfoJob() {
+        if (isJobRunning("fetchStockInfoJob")) {
+            log.info("Job already running, skip");
+            return;
+        }
+
+        JobParameters params = new JobParametersBuilder()
+                .addLong("runAt", System.currentTimeMillis()) // ⭐ 중요
+                .toJobParameters();
+
+        try {
+            jobLauncher.run(fetchStockInfoJob, params);
+        } catch (JobExecutionAlreadyRunningException |
+                 JobRestartException |
+                 JobInstanceAlreadyCompleteException |
+                 JobParametersInvalidException e) {
+            log.warn("Batch job skipped: {}", e.getMessage());
+        }
+
+    }
 
 
     @Scheduled(fixedDelay = 300_000)
