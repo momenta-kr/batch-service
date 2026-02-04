@@ -29,7 +29,7 @@ public class FetchStockInfoTasklet implements Tasklet {
     @Nullable
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-        stockMasterRepository.findAllKospi().forEach(stockMaster -> {
+        stockMasterRepository.findAll().forEach(stockMaster -> {
             String stockCode = stockMaster.getId().getSymbol();
             DomesticStockCurrentPriceResponse domesticStockCurrentPriceResponse = kisClient.fetchDomesticStockCurrentPrice(stockCode);
             String redisKey = RedisKey.STOCK_INFO.getKey() + ":" + stockCode;
