@@ -67,7 +67,7 @@ public class GlobalScheduler {
     }
 
 
-    @Scheduled(fixedDelay = 60_000)
+    @Scheduled(fixedDelay = 10_000)
     public void runStockInfoJob() {
         if (isJobRunning("fetchStockInfoJob")) {
             log.info("Job already running, skip");
@@ -88,7 +88,7 @@ public class GlobalScheduler {
         }
     }
 
-    @Scheduled(fixedDelay = 300_000)
+    @Scheduled(fixedDelay = 10_000)
     public void runSaveSearchDefaultJob() {
         if (isJobRunning("saveSearchDefaultJob")) {
             log.info("Job already running, skip");
@@ -133,7 +133,7 @@ public class GlobalScheduler {
         }
     }
 
-    @Scheduled(fixedDelay = 300_000)
+    @Scheduled(fixedDelay = 10_000)
     public void runFetchIndustryIndexPriceJob() {
         if (isJobRunning("fetchIndexCategoryPriceJob")) {
             log.info("Job already running, skip");
@@ -154,7 +154,7 @@ public class GlobalScheduler {
         }
     }
 
-    @Scheduled(fixedDelay = 300_000)
+    @Scheduled(fixedDelay = 10_000)
     public void runFetchFluctuationJob() {
         if (isJobRunning("fetchFluctuationJob")) {
             log.info("Job already running, skip");
@@ -175,7 +175,7 @@ public class GlobalScheduler {
         }
     }
 
-    @Scheduled(fixedDelay = 300_000)
+    @Scheduled(fixedDelay = 10_000)
     public void runFetchIndexPriceJob() {
         if (isJobRunning("fetchIndexPriceJob")) {
             log.info("Job already running, skip");
